@@ -1,7 +1,7 @@
 """Load pandas DataFrames into relevant csv files, locally."""
 
-import pandas as pd
 import os
+import pandas as pd
 
 
 def create_csv_dump(device_id: str, data: pd.DataFrame) -> None:
@@ -10,14 +10,15 @@ def create_csv_dump(device_id: str, data: pd.DataFrame) -> None:
         os.mkdir(f'{device_id}/data')
     except FileExistsError:
         pass
-    data_days = [(i, df) for i, df in data.groupby('date')]
+    data_days = list(data.groupby('date'))
     for date in data_days:
         file_name = f'{device_id}/data/{date[0]}'
         if os.path.isfile(file_name):
-            df = pd.concat([pd.read_csv(file_name), date[1]]).drop_duplicates()
+            date_data = pd.concat(
+                [pd.read_csv(file_name), date[1]]).drop_duplicates()
         else:
-            df = date[1]
-        df.to_csv(file_name, index=False)
+            date_data = date[1]
+        date_data.to_csv(file_name, index=False)
 
 
 def record_daily_stats(device_id: str, data: pd.DataFrame) -> None:
@@ -49,10 +50,9 @@ def record_dangerous_levels(device_id: str, data: pd.DataFrame, threshold: float
     dangers = data[data['pm25'] > threshold]
     file_name = f'{device_id}/reports/dangers'
     if os.path.isfile(file_name):
-        df = pd.concat([pd.read_csv(file_name), dangers]).drop_duplicates()
-    else:
-        df = dangers
-    df.to_csv(file_name, index=False)
+        dangers = pd.concat(
+            [pd.read_csv(file_name), dangers]).drop_duplicates()
+    dangers.to_csv(file_name, index=False)
 
 
 def load_data(device_id: str, data: pd.DataFrame, danger_threshold: float = 30) -> None:

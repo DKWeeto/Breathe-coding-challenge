@@ -6,15 +6,13 @@ from requests import get
 def get_history(device_id: str) -> dict:
     """Get device data from API."""
     response = get(
-        f"https://pm25.lass-net.org/API-1.0.0/device/{device_id}/history/")
+        f"https://pm25.lass-net.org/API-1.0.0/device/{device_id}/history/", timeout=30)
     if response.ok:
         data = response.json()
         if int(data["num_of_records"]) > 0:
             return data['feeds']
-        else:
-            return {"Error": "No records for this device."}
-    else:
-        return {"Error": "Status code not ok."}
+        return {"Error": "No records for this device."}
+    return {"Error": "Status code not ok."}
 
 
 if __name__ == "__main__":

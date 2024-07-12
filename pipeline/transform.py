@@ -21,8 +21,7 @@ def transform_all_records(feeds) -> pd.DataFrame:
     for feed in feeds:
         project_name = list(feed.keys())[0]
         for record in feed[project_name]:
-            transformed_data = {}
-            transformed_data["date"], transformed_data["time"], transformed_data["pm25"] = transform_record(
-                record)
-            all_records.append(transformed_data)
+            data = {}
+            data["date"], data["time"], data["pm25"] = transform_record(record)
+            all_records.append(data)
     return pd.DataFrame(all_records).drop_duplicates().dropna()
