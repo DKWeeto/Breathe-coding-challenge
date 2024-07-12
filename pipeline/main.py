@@ -9,7 +9,11 @@ from load import load_data
 
 def pipeline(device_id: str) -> None:
     """Run the pipeline for a single device"""
-    load_data(device_id, transform_all_records(get_history(device_id)))
+    raw_data = get_history(device_id)
+    if 'Error' not in raw_data:
+        load_data(device_id, transform_all_records(raw_data))
+    else:
+        print(raw_data)
 
 
 if __name__ == "__main__":
